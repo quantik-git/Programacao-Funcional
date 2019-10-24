@@ -171,7 +171,7 @@ temRepetidos :: Eq a => [a] -> Bool
 temRepetidos [x] = False
 temRepetidos (x:xs) = if elem x xs
     then True
-    else False
+    else temRepetidos xs
 
 algarismos :: [Char] -> [Char]
 algarismos [] = []
