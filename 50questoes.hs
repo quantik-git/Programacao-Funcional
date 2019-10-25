@@ -61,7 +61,16 @@ group' (x:xs) = agrupar [x] x xs
         agrupar lista elemento (h:t)
             | elemento == h = agrupar (lista !++ [h]) h t
             | otherwise     = lista : agrupar [h] h t
-
+-- Versão alternativa
+group :: Eq a => [a] -> [[a]]
+group [] = []
+group lista = agrupar lista : group (descartar lista)
+  where
+    agrupar [x] = [x] 
+    agrupar (x:y:xs) = if x == y then x : agrupar (y:xs) else [x]
+    descartar [x] = []
+    descartar (x:y:xs) = if x == y then descartar (y:xs) else (y:xs)
+    
 concat' :: [[a]] -> [a]
 concat' [] = []
 concat' (x:xs) = x !++ concat' xs
