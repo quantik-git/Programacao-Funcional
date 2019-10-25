@@ -66,19 +66,27 @@ concat' :: [[a]] -> [a]
 concat' [] = []
 concat' (x:xs) = x !++ concat' xs
 
+-- Versão sem predefinidas
 inits :: [a] -> [[a]]
 inits [] = [[]]
 inits (x:xs) = [] : prefixos [x] xs
     where
         prefixos lista [] = [lista]
         prefixos lista (h:t) = lista : prefixos (lista ++ [h]) t
+-- Versão simples
+inits' [] = [[]]
+inits' lista = (inits . init) lista ++ [lista]
 
+-- Versão sem predefinidas
 tails :: [a] -> [[a]]
 tails [] = [[]]
 tails tudo@(x:xs) = tudo : sufixos x xs
     where
         sufixos lista [] = []
         sufixos lista (h:t) = t : sufixos h t
+-- Versão simples
+tails [] = [[]]
+tails lista = lista : (tails . tail) lista
 
 isPrefixOf :: Eq a => [a] -> [a] -> Bool
 isPrefixOf [] _ = True
@@ -106,6 +114,7 @@ elemIndices elemento lista = contador 0 elemento lista
             then indice : contador (indice + 1) elemento xs
             else contador (indice + 1) elemento xs
 
+-- Versão noob
 nub ::  Eq a => [a] -> [a]
 nub lista@(x:xs) = reverse' (mem [x] lista)
     where
@@ -119,6 +128,17 @@ nub lista@(x:xs) = reverse' (mem [x] lista)
         checkDif (x:xs) elemento = if x == elemento
             then False
             else checkDif xs elemento
+-- Versão sem predefinidas
+nub' :: (Eq a, Num a) => [a] -> [a]
+nub' [] = []
+nub' (h:t) = h : nub' (descartar (h:t))
+  where
+    descartar [x] = []
+    descartar (x:y:xs) = if x == y then descartar (y:xs) else y : descartar (x:xs)
+--Versão mais simples
+nub'' :: (Eq a, Num a) => [a] -> [a]
+nub'' [x] = [x]
+nub'' (h:t) = if elem h t then nub t else h : nub t
 
 delete :: Eq a => a -> [a] -> [a]
 delete elemento (x:xs) = if elemento == x
@@ -186,6 +206,10 @@ posImpares lista = posImpar lista 0
         posImpar (x:xs) flag = if flag == 0
             then posImpar xs 1
             else x : posImpar xs 0
+-- Alternativa mais simples
+posImpares' [] = []
+posImpares' [x] = [x]
+posImpares' (x:y:xs) = x : posImpares xs
 
 posPares ::  [a] -> [a]
 posPares lista = posImpar lista 1
@@ -194,6 +218,10 @@ posPares lista = posImpar lista 1
         posImpar (x:xs) flag = if flag == 0
             then posImpar xs 1
             else x : posImpar xs 0
+-- Alternativa mais simples
+posPares' [] = []
+posPares' [x] = []
+posPares' (x:y:xs) = y : posPares xs
 
 isSorted :: Ord a => [a] -> Bool
 isSorted [x] = True
@@ -213,7 +241,9 @@ iSort' (x:xs) = insert' x (iSort' xs)
 menor ::  String -> String -> Bool
 menor _ [] = False
 menor [] _ = True
-menor (x:xs) (y:ys) = menor xs ys
+menor (x:xs) (y:ys) | x == y = menor xs ys
+                    | x <  y = True
+                    | otherwise = False
 
 elemMSet ::  Eq a => a -> [(a,Int)] -> Bool
 elemMSet elemento [] = False
@@ -338,6 +368,7 @@ mesmaOrdenada ((Pos x a):(Pos y b):xs) = if a == b
   then mesmaOrdenada ((Pos y b):xs)
   else False
 
+-- Pessoal não tenho a certeza se esta é a correcta
 data Semaforo = Verde | Amarelo | Vermelho deriving Show
 
 interseccaoOK ::  [Semaforo] -> Bool
